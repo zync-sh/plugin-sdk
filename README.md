@@ -1,5 +1,11 @@
 # Zync plugin SDK (beta)
 
+Start with the community guides: [build a plugin](https://zync.thesudoer.in/docs/plugin-development/),
+[API and permissions](https://zync.thesudoer.in/docs/plugin-api/),
+[sign and publish](https://zync.thesudoer.in/docs/plugin-publishing/), and
+[best practices](https://zync.thesudoer.in/docs/plugin-best-practices/).
+The signed marketplace uses [zync-plugin-registry](https://github.com/zync-sh/zync-plugin-registry).
+
 ## Terminal overlays (2.1.0-beta.4)
 
 `registerTerminalOverlay(popupElement)` from `@zync-sh/plugin-sdk/terminal`
@@ -34,7 +40,9 @@ for updating and testing plugin source; it does not make external assets work
 in Zync 2.33.7 or older. Do not publish migrated plugin builds to users until
 the compatible desktop release has passed packaged-app testing.
 
-Zync supplies the `zync` object when it starts a plugin worker or pane. Do not bundle an SDK runtime into the plugin.
+Zync supplies the `zync` object when it starts a plugin worker or pane. Import worker
+and pane declarations as types; they do not create runtime authority. If using the
+SDK's terminal surface helpers, bundle those helper implementations into your pane.
 
 ## Editor status (desktop host)
 
@@ -106,10 +114,15 @@ The signer accepts Ed25519 private PEM keys (encrypted or unencrypted) and exist
 Run the packaged CLI against the **built plugin directory** (the one containing `manifest.json` and its referenced assets):
 
 ```sh
-npx zync-plugin validate ./dist/my-plugin --zync-version 2.32.2
+npx --no-install zync-sdk validate ./dist/my-plugin --zync-version 2.34.0
 ```
 
-In this repository, the same check is available as `npm run plugin:validate -- ./dist/my-plugin`. For programmatic checks, import `validateManifest` or `validatePackageDirectory` from `@zync-sh/plugin-sdk/validate`. Validation returns `{ valid, issues }`; warnings do not fail the check.
+This assumes the scoped SDK is already installed in your project. From this SDK
+source checkout, use `node bin/zync-plugin.mjs validate <built-directory>`.
+For programmatic checks, import `validateManifest` or `validatePackageDirectory`
+from `@zync-sh/plugin-sdk/validate`. Validation returns `{ valid, issues }`;
+warnings do not fail the check. Also check the earliest desktop version you claim
+to support, not only the example version above.
 
 The preflight checks Manifest v2 fields, publisher namespace, semantic plugin version, contribution/permission declarations, known permissions, network host declarations, referenced files, basic package limits, and plugin API compatibility. For static pane resource links it also checks package-relative paths, supported asset types, the 2 MiB resource limit, and a minimum Zync version for external pane assets. Use relative bundler output (for example, Vite `base: './'`); root-relative URLs cannot resolve inside a plugin pane. Pass `--zync-version` to check compatibility with a specific app build; without it, the Zync range is syntax-checked only. Unknown optional permissions produce warnings because the host denies them until supported. The preflight does **not** validate signatures, inspect executable behavior, or replace native install-time validation. The signing tool and native host retain their own package and security checks.
 
@@ -118,6 +131,9 @@ The [basic starter template](templates/basic/README.md) is included in this pack
 ## Host-provided APIs
 
 For a worker:
+
+Declare `ui.commands.register`, the command contribution, and
+`ui.notifications.emit` in the manifest before using this example:
 
 ```ts
 import type { ZyncWorkerApi } from '@zync-sh/plugin-sdk/worker';
@@ -135,7 +151,10 @@ For an isolated pane, use `import type { ZyncPaneApi } from '@zync-sh/plugin-sdk
 
 The typed worker interface covers the Manifest v2 broker APIs only. Legacy plugin APIs are deliberately absent. Every host operation is still checked against the installed manifest, current grant, runtime identity, and applicable scope. The SDK version does not replace the manifest's `engines.pluginApi` compatibility declaration.
 
-See the [plugin architecture](https://github.com/zync-sh/zync/blob/main/docs/PLUGINS.md) and [basic starter template](templates/basic/README.md) for package format, permissions, signing, and manual testing.
+See the [community plugin guide](https://zync.thesudoer.in/docs/plugins/) and
+[basic starter template](templates/basic/README.md) for package format,
+permissions, signing, and manual testing. Internal architecture references are
+maintained separately; contributors do not need access to them.
 
 ## Experimental host-owned terminals (2.1.0-beta.4)
 
