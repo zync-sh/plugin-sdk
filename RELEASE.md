@@ -1,5 +1,28 @@
 # SDK release policy
 
+## 2.2.0-beta.1 — declarative icon packs (unpublished candidate)
+
+Adds API 2.2 icon-theme types, schema, bounded static-SVG validation, a data-only
+starter and loopback preview. Existing exports and legacy icon packs remain
+compatible. This is local source work, not an npm publication or a marketplace
+launch. The desktop checkout advertises API 2.2; its SDK dependency deliberately
+remains pinned to the last published version until a coordinated SDK release.
+
+Before publication, run the checks below, review the exact tarball and dependency
+audit, and test installation, enable/disable, updates and rollback on a packaged
+host providing API 2.2. Do not infer released host support from the starter's
+app-version floor; `engines.pluginApi` gates the new contribution.
+Run `node tests/iconTheme.browser.test.mjs` with Playwright and Edge installed
+(or set `ZYNC_PLAYWRIGHT_MODULE` / `ZYNC_BROWSER_CHANNEL` for the local runtime).
+This separate browser check covers artwork loading, mapping behavior and preview
+controls without making a browser a runtime dependency of the published SDK.
+
+Implementation: [deecad3](https://github.com/zync-sh/plugin-sdk/commit/deecad336d34df2b31afbc36983f673f9adca6f7).
+Preview browser coverage: [aa224c2](https://github.com/zync-sh/plugin-sdk/commit/aa224c20b2bebce532945f5f99a522721964d8ca).
+The SDK tests, type contracts and preview browser check passed locally on Windows.
+A real Unix FIFO check and packaged-host lifecycle smoke tests remain publication
+gates; this candidate has not been published.
+
 ## 2.1.0-beta.4 — terminal overlay integration
 
 Published under `beta` on 2026-10-01. Registry integrity matches the reviewed

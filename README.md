@@ -6,6 +6,24 @@ Start with the community guides: [build a plugin](https://zync.thesudoer.in/docs
 [best practices](https://zync.thesudoer.in/docs/plugin-best-practices/).
 The signed marketplace uses [zync-plugin-registry](https://github.com/zync-sh/zync-plugin-registry).
 
+## Declarative icon packs (2.2.0-beta.1, unpublished)
+
+The local SDK candidate adds a versioned, data-only `iconTheme` contribution.
+Built-in and community packs use Zync's existing plugin registry, enable/disable
+controls, installation review and update/rollback paths. No worker, CSS, network
+permission or new registration API is needed.
+
+Start from [`templates/icon-theme`](templates/icon-theme/README.md). It includes
+three SVGs, filename/compound-extension/folder associations, a validated build,
+and `zync-plugin preview-icons dist`, a localhost-only preview that runs no plugin
+code. The exported `./icon-theme` helpers and `./icon-theme.schema.json` support
+typed authoring and editor validation. Native package validation is authoritative.
+
+Declare `engines.pluginApi: ">=2.2.0, <3.0.0"`; older hosts cannot interpret this
+contribution. This candidate is not published and does not establish a released
+desktop minimum: test against a host providing API 2.2 before distributing packs.
+Legacy `iconsPath` packs and existing SDK exports remain supported.
+
 ## Terminal overlays (2.1.0-beta.4)
 
 `registerTerminalOverlay(popupElement)` from `@zync-sh/plugin-sdk/terminal`
@@ -21,7 +39,7 @@ Install `@zync-sh/plugin-sdk@2.1.0-beta.4` explicitly for overlay integration.
 
 Public authoring types for Manifest v2 plugins. This package is maintained separately from the Zync desktop app and has its own npm version and release lifecycle.
 
-This SDK targets API **2.1**. It adds `sshCommand.execute(paneInstanceId, { program, args, expectedConnectionToken? })`, requiring `ssh.command.execute` and `engines.pluginApi: "^2.1.0"`. The returned `connectionToken` must be carried into commands following a confirmation so reconnect/rebind cannot silently change their destination. Commands use the SSH account's full authority; this is not a read-only or PM2-only permission. API 2.0 hosts reject plugins requiring this addition.
+This SDK targets API **2.2**. The earlier API 2.1 addition `sshCommand.execute(paneInstanceId, { program, args, expectedConnectionToken? })` requires `ssh.command.execute` and `engines.pluginApi: "^2.1.0"`. The returned `connectionToken` must be carried into commands following a confirmation so reconnect/rebind cannot silently change their destination. Commands use the SSH account's full authority; this is not a read-only or PM2-only permission. API 2.0 hosts reject plugins requiring this addition.
 
 To test changes from a local checkout, install the SDK as a development dependency:
 
