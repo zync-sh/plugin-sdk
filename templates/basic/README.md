@@ -2,10 +2,10 @@
 
 Copy this directory into a new project and replace the sample publisher, id, and name in `manifest.mjs` before distributing it.
 
-Install the prerelease SDK:
+Install the SDK:
 
 ```sh
-npm install --save-dev --save-exact @zync-sh/plugin-sdk@2.1.0-beta.4
+npm install --save-dev --save-exact @zync-sh/plugin-sdk@2.2.0
 ```
 
 For an unreleased local checkout, install it by path instead:

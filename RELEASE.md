@@ -1,27 +1,48 @@
 # SDK release policy
 
-## 2.2.0-beta.1 — declarative icon packs (unpublished candidate)
+## 2.2.0 — declarative icon packs
 
 Adds API 2.2 icon-theme types, schema, bounded static-SVG validation, a data-only
 starter and loopback preview. Existing exports and legacy icon packs remain
-compatible. This is local source work, not an npm publication or a marketplace
-launch. The desktop checkout advertises API 2.2; its SDK dependency deliberately
-remains pinned to the last published version until a coordinated SDK release.
+compatible. Published to npm as 2.2.0 under the default `latest` tag on 2026-10-16,
+at the operator's request instead of publishing the earlier 2.2.0-beta.1 candidate.
+Public registry version, tags and integrity were independently checked after
+npm completed processing; the `beta` tag remains at 2.1.0-beta.4.
+The desktop checkout advertises API 2.2; updating its SDK dependency is a separate
+integration step. This SDK release does not publish the desktop app or marketplace.
 
-Before publication, run the checks below, review the exact tarball and dependency
-audit, and test installation, enable/disable, updates and rollback on a packaged
-host providing API 2.2. Do not infer released host support from the starter's
-app-version floor; `engines.pluginApi` gates the new contribution.
+Before publication, run the checks below and review the exact tarball and dependency
+audit. The operator reported successful installation, update, rollback,
+disable/re-enable and restart persistence for the local test icon pack in both
+`tauri dev` and a packaged host. These are operator-reported smoke results, not
+an independently recorded build digest or signed-marketplace staging acceptance.
+Do not infer released host support from the starter's app-version floor;
+`engines.pluginApi` gates the new contribution.
 Run `node tests/iconTheme.browser.test.mjs` with Playwright and Edge installed
 (or set `ZYNC_PLAYWRIGHT_MODULE` / `ZYNC_BROWSER_CHANNEL` for the local runtime).
 This separate browser check covers artwork loading, mapping behavior and preview
 controls without making a browser a runtime dependency of the published SDK.
 
 Implementation: [deecad3](https://github.com/zync-sh/plugin-sdk/commit/deecad336d34df2b31afbc36983f673f9adca6f7).
+Release metadata: [8501306](https://github.com/zync-sh/plugin-sdk/commit/850130652fe14a492eddf23c89bec2c7d9d10fa0).
 Preview browser coverage: [aa224c2](https://github.com/zync-sh/plugin-sdk/commit/aa224c20b2bebce532945f5f99a522721964d8ca).
 The SDK tests, type contracts and preview browser check passed locally on Windows.
-A real Unix FIFO check and packaged-host lifecycle smoke tests remain publication
-gates; this candidate has not been published.
+An actual Linux FIFO was also rejected without blocking under a bounded test
+timeout. Production dependency audit reported zero known vulnerabilities.
+The stable SDK version does not promote experimental host-terminal routes or
+certify a production marketplace. Signed HTTPS staging, independent security
+review and the remaining host-terminal release gates below remain separate work.
+
+Publication record (2026-10-16): npm accepted the upload of 2.2.0 with public
+access and the `latest` tag after the operator completed browser authentication.
+Npm reported that processing was pending; public version/tag/integrity verification
+subsequently completed successfully. Both the registry SHA-1 and SHA-512 integrity
+match the tested tarball, and `latest` resolves to 2.2.0.
+The tested upload contains 38 files; its SHA-1 is
+`95a7577a200da3b401a1d631e1b6a51bf4e681b0`.
+Final pre-publication tests, browser preview, an isolated tarball installation,
+SDK and host consumer types, new/legacy CLI validation and stable/beta signing
+examples passed. The app's existing SDK dependency pin was not changed.
 
 ## 2.1.0-beta.4 — terminal overlay integration
 

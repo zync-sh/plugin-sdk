@@ -1,11 +1,11 @@
 # Declarative icon-theme starter
 
-This starter needs an updated Zync host exposing plugin API **2.2**. SDK
-2.2.0-beta.1 is currently unreleased source work; do not assume it is on npm.
-Install the matching local SDK checkout while preparing or testing the package.
+This starter needs an updated Zync host exposing plugin API **2.2**. Use SDK
+2.2.0 or a matching local SDK checkout while preparing or testing the package.
+The SDK version does not establish a released desktop minimum.
 
 1. Copy this folder into a new project.
-2. Run `npm install --save-dev <path-to-sdk-checkout>` (or use the matching published SDK after release).
+2. Run `npm install` to use SDK 2.2.0, or `npm install --save-dev <path-to-sdk-checkout>` to test local SDK changes.
 3. Change `id`, `publisher`, name, version and attribution in `manifest.mjs`.
 4. Add your static SVG artwork under `icons/` and map names/extensions in `iconTheme`.
 5. Run `npm run build`, `npm run validate`, then `npm run preview`.

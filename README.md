@@ -1,4 +1,4 @@
-# Zync plugin SDK (beta)
+# Zync plugin SDK
 
 Start with the community guides: [build a plugin](https://zync.thesudoer.in/docs/plugin-development/),
 [API and permissions](https://zync.thesudoer.in/docs/plugin-api/),
@@ -6,9 +6,9 @@ Start with the community guides: [build a plugin](https://zync.thesudoer.in/docs
 [best practices](https://zync.thesudoer.in/docs/plugin-best-practices/).
 The signed marketplace uses [zync-plugin-registry](https://github.com/zync-sh/zync-plugin-registry).
 
-## Declarative icon packs (2.2.0-beta.1, unpublished)
+## Declarative icon packs (2.2.0)
 
-The local SDK candidate adds a versioned, data-only `iconTheme` contribution.
+SDK 2.2.0 adds a versioned, data-only `iconTheme` contribution.
 Built-in and community packs use Zync's existing plugin registry, enable/disable
 controls, installation review and update/rollback paths. No worker, CSS, network
 permission or new registration API is needed.
@@ -20,8 +20,8 @@ code. The exported `./icon-theme` helpers and `./icon-theme.schema.json` support
 typed authoring and editor validation. Native package validation is authoritative.
 
 Declare `engines.pluginApi: ">=2.2.0, <3.0.0"`; older hosts cannot interpret this
-contribution. This candidate is not published and does not establish a released
-desktop minimum: test against a host providing API 2.2 before distributing packs.
+contribution. The SDK release does not establish a released desktop minimum:
+test against a host providing API 2.2 before distributing packs.
 Legacy `iconsPath` packs and existing SDK exports remain supported.
 
 ## Terminal overlays (2.1.0-beta.4)
@@ -35,7 +35,7 @@ The host validates all geometry and clips only actual popup rectangles, includin
 over the header. Separate host approval dialogs remain protected. Older hosts
 hide the surface for any registered popup; no new fields are sent to old parsers.
 No terminal I/O, approval authority, DOM access or arbitrary z-index is exposed.
-Install `@zync-sh/plugin-sdk@2.1.0-beta.4` explicitly for overlay integration.
+The overlay helper is included in SDK 2.2.0 and was introduced in 2.1.0-beta.4.
 
 Public authoring types for Manifest v2 plugins. This package is maintained separately from the Zync desktop app and has its own npm version and release lifecycle.
 
@@ -47,14 +47,14 @@ To test changes from a local checkout, install the SDK as a development dependen
 npm install --save-dev /path/to/npm-packages/plugin-sdk
 ```
 
-Install this prerelease explicitly with:
+Install this SDK version explicitly with:
 
 ```sh
-npm install --save-dev @zync-sh/plugin-sdk@beta
+npm install --save-dev --save-exact @zync-sh/plugin-sdk@2.2.0
 ```
 
-The starter's external pane assets require Zync `>=2.33.8`. This SDK beta is
-for updating and testing plugin source; it does not make external assets work
+The starter's external pane assets require Zync `>=2.33.8`. The SDK is
+for authoring plugin source; it does not make external assets work
 in Zync 2.33.7 or older. Do not publish migrated plugin builds to users until
 the compatible desktop release has passed packaged-app testing.
 
@@ -106,10 +106,10 @@ Write the resulting object to `manifest.json` during your build. Zync installs t
 
 ### Generate a publisher key using OpenSSL
 
-This prerelease includes `keygen` and the `zync-sdk` executable. Use the official scoped package explicitly:
+The SDK includes `keygen` and the `zync-sdk` executable. Use the official scoped package explicitly:
 
 ```powershell
-npx --package=@zync-sh/plugin-sdk@beta zync-sdk keygen --out C:\ZyncSigningKeys\publisher-v1
+npx --package=@zync-sh/plugin-sdk@2.2.0 zync-sdk keygen --out C:\ZyncSigningKeys\publisher-v1
 ```
 
 Do not use `npx zync-sdk`: that can resolve an unrelated unscoped npm package. In a project with this SDK installed, `npx --no-install zync-sdk keygen --out <new-directory>` runs its installed executable. Developers working in this source checkout can test it with `node bin/zync-plugin.mjs keygen --out <new-directory>`.
@@ -123,8 +123,8 @@ This command is for plugin publishers, not marketplace root-key management. Gene
 Publishers choose their key-custody model, including local signing or protected CI secrets. Never commit private keys, include them in packages, print them in logs, or send them to the marketplace. Keep signing secrets out of PR-validation jobs and untrusted code execution. Protected release environments, reviewed dependencies and restricted secret access are recommended; passphrase encryption is optional. The marketplace root key has a separate operator policy and must not be substituted for a publisher key.
 
 ```powershell
-npx --package=@zync-sh/plugin-sdk@beta zync-sdk sign --source ./dist/my-plugin --key C:\ZyncSigningKeys\publisher-v1\publisher-private.pem --out ./signed/my-plugin
-npx --package=@zync-sh/plugin-sdk@beta zync-sdk verify --source ./signed/my-plugin
+npx --package=@zync-sh/plugin-sdk@2.2.0 zync-sdk sign --source ./dist/my-plugin --key C:\ZyncSigningKeys\publisher-v1\publisher-private.pem --out ./signed/my-plugin
+npx --package=@zync-sh/plugin-sdk@2.2.0 zync-sdk verify --source ./signed/my-plugin
 ```
 
 The signer accepts Ed25519 private PEM keys (encrypted or unencrypted) and existing JSON publisher keys. Encrypted PEM keys prompt once using hidden input. The PEM publisher identity comes from the manifest; trusted marketplace metadata must separately authorize that public key for the publisher. Verification checks package integrity and its signature, not publisher authorization, behavior safety, or registry trust. Signed output must be new and outside the source directory; the private key must also be outside the source. Never include private keys in build output. Keep the signed folder's contents at the ZIP root, including `integrity.json` and `signature.json`.
@@ -208,7 +208,8 @@ After natural exit, close the surface and explicitly request a fresh offer; ther
 is no automatic restart. Zync's foreground **Open terminal** button and confirmation
 are required once per session, not per command typed afterward.
 
-This beta is for integration against a matching updated desktop build, **not a
-stable marketplace rollout**. Published older desktop versions lack these routes.
+The terminal integration remains experimental against a matching updated desktop
+build, **not a stable marketplace rollout**. A stable SDK version does not promote
+experimental host features. Published older desktop versions lack these routes.
 Packaged WebView2 testing, real-server profiling and the SSH library cancellation/
 buffering limitations documented in `docs/PLUGIN_TERMINALS.md` remain release gates.
