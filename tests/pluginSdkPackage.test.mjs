@@ -30,12 +30,16 @@ try {
   const [packed] = JSON.parse(result.stdout);
   const files = packed.files.map(file => file.path).sort();
   assert.deepEqual(files, [
-    'LICENSE', 'README.md', 'RELEASE.md', 'bin/keygen.mjs', 'bin/pem-key.mjs', 'bin/zync-plugin.mjs', 'editor.d.ts', 'index.d.ts', 'index.js', 'package.json',
+    'LICENSE', 'README.md', 'RELEASE.md', 'bin/icon-theme-preview.mjs', 'bin/keygen.mjs', 'bin/pem-key.mjs', 'bin/zync-plugin.mjs', 'editor.d.ts',
+    'icon-theme.d.ts', 'icon-theme.js', 'icon-theme.schema.json', 'index.d.ts', 'index.js', 'package.json',
     'pane.d.ts', 'signing.js', 'templates/basic/README.md', 'templates/basic/manifest.mjs',
     'templates/basic/package.json', 'templates/basic/scripts/build.mjs',
     'templates/basic/scripts/preview.mjs',
     'templates/basic/src/ui/index.html', 'templates/basic/src/ui/pane.css',
     'templates/basic/src/ui/pane.js', 'templates/basic/src/worker.js',
+    'templates/icon-theme/LICENSE', 'templates/icon-theme/README.md', 'templates/icon-theme/icons/file.svg',
+    'templates/icon-theme/icons/folder.svg', 'templates/icon-theme/icons/source.svg', 'templates/icon-theme/manifest.mjs',
+    'templates/icon-theme/package.json', 'templates/icon-theme/scripts/build.mjs',
     'terminal.d.ts', 'terminal.js', 'validate.d.ts', 'validate.js', 'worker.d.ts',
   ]);
 } finally {

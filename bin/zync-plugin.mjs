@@ -3,10 +3,16 @@ import { validatePackageDirectory } from '../validate.js';
 import { generateKeys, promptPassphrase, readHiddenPassphrase } from './keygen.mjs';
 import { readKeyText } from './pem-key.mjs';
 import { signPluginDirectory, verifySignedPlugin } from '../signing.js';
+import { startIconThemePreview } from './icon-theme-preview.mjs';
 
 const [command, directory, ...extra] = process.argv.slice(2);
 const withVersion = extra.length === 2 && extra[0] === '--zync-version';
-if (command === 'keygen') {
+if (command === 'preview-icons' && directory && !extra.length) {
+  try {
+    const server = await startIconThemePreview(directory);
+    console.log(`Icon preview: http://127.0.0.1:${server.address().port}/ (Ctrl+C to stop)`);
+  } catch (error) { console.error(error instanceof Error ? error.message : String(error)); process.exitCode = 1; }
+} else if (command === 'keygen') {
   try {
     let passphrase = await promptPassphrase();
     try { generateKeys(process.argv.slice(3), undefined, passphrase); }
@@ -44,6 +50,7 @@ if (command === 'keygen') {
   } finally { passphrase = undefined; }
 } else if (command !== 'validate' || !directory || (extra.length && !withVersion)) {
   console.error('Usage: zync-plugin validate <plugin-directory> [--zync-version <version>]');
+  console.error('       zync-plugin preview-icons <plugin-directory>');
   console.error('       zync-sdk keygen --out <NEW directory outside Git> [--openssl <executable>]');
   console.error('       zync-sdk sign --source <built plugin> --key <private key.pem> --out <new signed directory>');
   console.error('       zync-sdk verify --source <signed directory>');

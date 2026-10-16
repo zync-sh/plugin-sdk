@@ -1,3 +1,6 @@
+import type { IconThemeDefinition } from './icon-theme.js';
+export type { IconThemeDefinition } from './icon-theme.js';
+
 export interface PermissionRequest {
   id: string;
   reason: string;
@@ -36,6 +39,7 @@ export interface ManifestV2 {
   };
   icon?: string;
   type?: string;
+  iconTheme?: IconThemeDefinition;
 }
 
 /** Type-checks the manifest; the native host remains the final validator. */

@@ -1,0 +1,14 @@
+{
+  "name": "zync-icon-theme-starter",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "validate": "zync-plugin validate dist",
+    "preview": "zync-plugin preview-icons dist"
+  },
+  "devDependencies": {
+    "@zync-sh/plugin-sdk": "2.2.0-beta.1"
+  }
+}

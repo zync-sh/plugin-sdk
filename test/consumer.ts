@@ -4,6 +4,16 @@ import type { ZyncPaneApi } from '@zync-sh/plugin-sdk/pane';
 import type { ZyncEditorBridge } from '@zync-sh/plugin-sdk/editor';
 import { mountTerminalSurface } from '@zync-sh/plugin-sdk/terminal';
 import { validateManifest, type ValidationIssue } from '@zync-sh/plugin-sdk/validate';
+import { defineIconTheme, validateIconTheme, type IconThemeDefinition } from '@zync-sh/plugin-sdk/icon-theme';
+
+const icons: IconThemeDefinition = defineIconTheme({
+  version: 1, file: 'file', folder: 'file',
+  iconDefinitions: { file: { iconPath: 'icons/file.svg' } },
+  fileExtensions: { 'd.ts': 'file' },
+});
+validateIconTheme(icons).valid satisfies boolean;
+// @ts-expect-error unsupported schema version
+defineIconTheme({ ...icons, version: 2 });
 
 const manifest: ManifestV2 = defineManifest({
   manifestVersion: 2,

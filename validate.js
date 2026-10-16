@@ -3,6 +3,7 @@ import path from 'node:path';
 import { isIP } from 'node:net';
 import { parse } from 'parse5';
 import semver from 'semver';
+import { validateIconTheme, validateIconThemeAssets, iconThemeApiVersion } from './icon-theme.js';
 
 // This preflight mirrors author-facing manifest rules. Installation still relies on
 // the native validator, which also enforces package and runtime security boundaries.
@@ -19,7 +20,7 @@ export const knownPermissionIds = Object.freeze([
 ]);
 
 const knownPermissions = new Set(knownPermissionIds);
-export const pluginApiVersion = '2.1.0';
+export const pluginApiVersion = '2.2.0';
 // First desktop version planned to serve package-relative pane assets. Align
 // this gate with the desktop release before distributing migrated plugins.
 export const externalPaneAssetsMinZyncVersion = '2.33.8';
@@ -308,17 +309,20 @@ function validateContributions(issues, value, declared, assets) {
   }
 }
 
+const normalizedEngineRange = range => typeof range === 'string' ? range.replace(/,/g, ' ') : range;
+
 function engineRange(issues, range, location, installedVersion) {
   if (!text(issues, range, location, 80)) return;
   // Rust's host-side VersionReq does not support npm's union and hyphen syntax.
-  if (range.includes('||') || /\s-\s/.test(range) || !semver.validRange(range)) {
+  const normalized = normalizedEngineRange(range);
+  if (range.includes('||') || /\s-\s/.test(range) || !semver.validRange(normalized)) {
     record(issues, location, 'Must be a supported semantic version range');
     return;
   }
   if (installedVersion !== undefined) {
     if (!semver.valid(installedVersion)) {
       record(issues, location, `Target version is invalid: ${installedVersion}`);
-    } else if (!semver.satisfies(installedVersion, range)) {
+    } else if (!semver.satisfies(installedVersion, normalized)) {
       record(issues, location, `Requires ${range}, but the target provides ${installedVersion}`);
     }
   }
@@ -363,6 +367,15 @@ export function validateManifest(manifest, options = {}) {
   }
   const declared = validatePermissions(issues, manifest.permissions);
   validateContributions(issues, manifest.contributes, declared, assets);
+  if (manifest.iconTheme !== undefined) {
+    issues.push(...validateIconTheme(manifest.iconTheme).issues);
+    if (manifest.type !== 'icon-theme' || ['main', 'runtime', 'style', 'editor', 'iconsPath', 'icons_path'].some(key => manifest[key] !== undefined)
+      || Object.values(manifest.contributes ?? {}).some(entries => !Array.isArray(entries) || entries.length)
+      || declared.size) record(issues, 'iconTheme', 'Requires a data-only icon-theme plugin without executable entries, iconsPath, contributions or permissions');
+    const range = semver.validRange(normalizedEngineRange(manifest.engines?.pluginApi));
+    const minimum = range ? semver.minVersion(range) : null;
+    if (!minimum || semver.lt(minimum, iconThemeApiVersion)) record(issues, 'engines.pluginApi', `Icon themes require >=${iconThemeApiVersion}`);
+  }
   return { valid: !issues.some(issue => issue.severity === 'error'), issues, assets };
 }
 
@@ -410,6 +423,7 @@ export function validatePackageDirectory(directory, options = {}) {
     if (valid && !fs.lstatSync(current).isFile()) record(issues, asset.location, `Referenced path is not a file: ${asset.path}`);
   }
   validatePaneResources(root, manifest, issues);
+  if (manifest.iconTheme !== undefined) issues.push(...validateIconThemeAssets(root, manifest.iconTheme).issues);
   const pending = [root];
   let entries = 0;
   let totalBytes = 0;
